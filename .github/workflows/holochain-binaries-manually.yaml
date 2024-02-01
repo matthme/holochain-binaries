@@ -1,4 +1,4 @@
-name: 'release-holochain-binaries'
+name: 'release-holochain-binaries-manually'
 on:
   push:
     tags:

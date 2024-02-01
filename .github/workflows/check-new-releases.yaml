@@ -1,0 +1,70 @@
+name: Check for new releases
+on:
+  schedule:
+    - cron:  '0 * * * *'
+
+jobs:
+  check-new-01-releases:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+      - name: Check for new holochain releases
+        id: check_releases
+        run: |
+          echo "holochain_version=$(node ./scripts/check-new-01-releases.mjs)" >> $GITHUB_OUTPUT
+    outputs:
+      holochain-version: ${{ steps.check_releases.outputs.holochain_version }}
+
+  build-01-binaries:
+    needs: check-new-01-releases
+    if: ${{ needs.check-new-01-releases.outputs.holochain-version }} != ''
+    uses: ./.github/workflows/holochain-binaries.yaml
+    with:
+      holochain-version: ${{ needs.check-new-01-releases.outputs.holochain-version }}
+
+
+  check-new-02-releases:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+      - name: Check for new holochain releases
+        id: check_releases
+        run: |
+          echo "holochain_version=$(node ./scripts/check-new-02-releases.mjs)" >> $GITHUB_OUTPUT
+    outputs:
+      holochain-version: ${{ steps.check_releases.outputs.holochain_version }}
+
+  build-02-binaries:
+    needs: check-new-02-releases
+    if: ${{ needs.check-new-02-releases.outputs.holochain-version }} != ''
+    uses: ./.github/workflows/holochain-binaries.yaml
+    with:
+      holochain-version: ${{ needs.check-new-02-releases.outputs.holochain-version }}
+
+
+  check-new-03-releases:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+      - name: Check for new holochain releases
+        id: check_releases
+        run: |
+          echo "holochain_version=$(node ./scripts/check-new-03-releases.mjs)" >> $GITHUB_OUTPUT
+    outputs:
+      holochain-version: ${{ steps.check_releases.outputs.holochain_version }}
+
+  build-01-binaries:
+    needs: check-new-03-releases
+    if: ${{ needs.check-new-03-releases.outputs.holochain-version }} != ''
+    uses: ./.github/workflows/holochain-binaries.yaml
+    with:
+      holochain-version: ${{ needs.check-new-03-releases.outputs.holochain-version }}
