@@ -19,6 +19,7 @@ jobs:
         id: check_releases
         run: |
           echo "holochain_version=$(node ./scripts/check-new-01-releases.mjs)" >> $GITHUB_OUTPUT
+          echo $(node ./scripts/check-new-01-releases.mjs)
     outputs:
       holochain-version: ${{ steps.check_releases.outputs.holochain_version }}
 
@@ -43,6 +44,7 @@ jobs:
         id: check_releases
         run: |
           echo "holochain_version=$(node ./scripts/check-new-02-releases.mjs)" >> $GITHUB_OUTPUT
+          echo $(node ./scripts/check-new-02-releases.mjs)
     outputs:
       holochain-version: ${{ steps.check_releases.outputs.holochain_version }}
 
@@ -67,6 +69,7 @@ jobs:
         id: check_releases
         run: |
           echo "holochain_version=$(node ./scripts/check-new-03-releases.mjs)" >> $GITHUB_OUTPUT
+          echo $(node ./scripts/check-new-03-releases.mjs)
     outputs:
       holochain-version: ${{ steps.check_releases.outputs.holochain_version }}
 
