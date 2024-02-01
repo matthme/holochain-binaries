@@ -53,7 +53,7 @@ jobs:
           $HcPath = Get-Command holochain | Select-Object -ExpandProperty Definition
           Copy-Item $HcPath -Destination holochain-v${{ inputs.holochain-version }}-x86_64-pc-windows-msvc.exe
 
-          gh release upload "$($env:GITHUB_REF -replace "refs/tags/")" "holochain-v${{ inputs.holochain-version }}-x86_64-pc-windows-msvc.exe"
+          gh release upload "${{ inputs.holochain-version }}" "holochain-v${{ inputs.holochain-version }}-x86_64-pc-windows-msvc.exe"
 
       - name: setup binaries (macos only)
         if: matrix.platform == 'macos-11'
@@ -64,7 +64,7 @@ jobs:
           HOLOCHAIN_PATH=$(which holochain)
           cp $HOLOCHAIN_PATH holochain-v${{ inputs.holochain-version }}-x86_64-apple-darwin
 
-          gh release upload "${GITHUB_REF#refs/tags/}" "holochain-v${{ inputs.holochain-version }}-x86_64-apple-darwin"
+          gh release upload "${{ inputs.holochain-version }}" "holochain-v${{ inputs.holochain-version }}-x86_64-apple-darwin"
 
       - name: setup binaries (ubuntu only)
         if: matrix.platform == 'ubuntu-22.04'
@@ -75,4 +75,4 @@ jobs:
           HOLOCHAIN_PATH=$(which holochain)
           cp $HOLOCHAIN_PATH holochain-v${{ inputs.holochain-version }}-x86_64-unknown-linux-gnu
 
-          gh release upload "${GITHUB_REF#refs/tags/}" "holochain-v${{ inputs.holochain-version }}-x86_64-unknown-linux-gnu"
+          gh release upload "${{ inputs.holochain-version }}" "holochain-v${{ inputs.holochain-version }}-x86_64-unknown-linux-gnu"
