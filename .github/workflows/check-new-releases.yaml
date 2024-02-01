@@ -27,7 +27,7 @@ jobs:
     permissions:
       contents: write
     needs: check-new-01-releases
-    if: false
+    if: ${{ needs.check-new-01-releases.outputs.holochain-version }}
     uses: ./.github/workflows/holochain-binaries.yaml
     with:
       holochain-version: ${{ needs.check-new-01-releases.outputs.holochain-version }}
@@ -52,7 +52,7 @@ jobs:
     permissions:
       contents: write
     needs: check-new-02-releases
-    if: ${{ needs.check-new-02-releases.outputs.holochain-version }} != ''
+    if: ${{ needs.check-new-02-releases.outputs.holochain-version }}
     uses: ./.github/workflows/holochain-binaries.yaml
     with:
       holochain-version: ${{ needs.check-new-02-releases.outputs.holochain-version }}
@@ -77,7 +77,7 @@ jobs:
     permissions:
       contents: write
     needs: check-new-03-releases
-    if: ${{ needs.check-new-03-releases.outputs.holochain-version }} != ''
+    if: ${{ needs.check-new-03-releases.outputs.holochain-version }}
     uses: ./.github/workflows/holochain-binaries.yaml
     with:
       holochain-version: ${{ needs.check-new-03-releases.outputs.holochain-version }}
