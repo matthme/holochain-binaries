@@ -1,7 +1,11 @@
 name: Check for new releases
+# on:
+#   schedule:
+#     - cron:  '0 * * * *'
 on:
-  schedule:
-    - cron:  '0 * * * *'
+  push:
+    branches:
+      - main
 
 jobs:
   check-new-01-releases:
