@@ -32,7 +32,7 @@ getAndDo(holochainReleasesOptions, (data) => {
     const unbuilt01Releases = unbuiltReleases.filter((tagName) => tagName.startsWith('holochain-0.1'));
     // We assume that there is only one new release without tag
     if (unbuilt01Releases.length > 0) {
-      console.log(unbuilt01Releases[0]);
+      console.log(unbuilt01Releases[0].replace('holochain-', ''));
     }
 
   })

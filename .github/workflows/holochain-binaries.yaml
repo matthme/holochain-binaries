@@ -31,6 +31,7 @@ jobs:
           body: 'Holochain binaries for Linux/Windows/macOS.'
           prerelease: true
           skipIfReleaseExists: true
+          tag: holochain-binaries-${{ inputs.holochain-version }}
 
       - name: install Rust stable
         uses: actions-rs/toolchain@v1
