@@ -43,7 +43,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
 
-          HOLOCHAIN_VERSION=$(node -p -e "require('config.json').holochainVersion")
+          HOLOCHAIN_VERSION=$(node -p -e "require('./config.json').holochainVersion")
 
           cargo install holochain --version $HOLOCHAIN_VERSION --locked --features sqlite-encrypted
           HOLOCHAIN_PATH=$(which holochain)
@@ -56,7 +56,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          HOLOCHAIN_VERSION=$(node -p -e "require('config.json').holochainVersion")
+          HOLOCHAIN_VERSION=$(node -p -e "require('./config.json').holochainVersion")
 
           cargo install holochain --version $HOLOCHAIN_VERSION --locked --features sqlite-encrypted
           HOLOCHAIN_PATH=$(which holochain)
@@ -69,7 +69,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          HOLOCHAIN_VERSION=$(node -p -e "require('config.json').holochainVersion")
+          HOLOCHAIN_VERSION=$(node -p -e "require('./config.json').holochainVersion")
 
           cargo install holochain --version $HOLOCHAIN_VERSION --locked --features sqlite-encrypted
           HOLOCHAIN_PATH=$(which holochain)
