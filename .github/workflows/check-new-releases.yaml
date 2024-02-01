@@ -27,7 +27,7 @@ jobs:
     permissions:
       contents: write
     needs: check-new-01-releases
-    if: ${{ needs.check-new-01-releases.outputs.holochain-version }} != ''
+    if: false
     uses: ./.github/workflows/holochain-binaries.yaml
     with:
       holochain-version: ${{ needs.check-new-01-releases.outputs.holochain-version }}
