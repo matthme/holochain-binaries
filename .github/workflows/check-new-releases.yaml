@@ -62,7 +62,7 @@ jobs:
     outputs:
       holochain-version: ${{ steps.check_releases.outputs.holochain_version }}
 
-  build-01-binaries:
+  build-03-binaries:
     needs: check-new-03-releases
     if: ${{ needs.check-new-03-releases.outputs.holochain-version }} != ''
     uses: ./.github/workflows/holochain-binaries.yaml
