@@ -1,6 +1,5 @@
 # holochain-binaries
 
-This repo builds the holochain binaries for Linux/macOS/Windows.
-
+This repo automatically builds the holochain and lair binaries for Linux/macOS/Windows.
 
 

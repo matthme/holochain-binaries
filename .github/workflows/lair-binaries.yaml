@@ -1,0 +1,68 @@
+name: 'release-lair-binaries'
+on:
+  workflow_call:
+    inputs:
+      lair-version:
+        required: true
+        type: string
+jobs:
+  publish-lair-binaries:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [windows-2019, macos-11, ubuntu-22.04]
+    permissions:
+      contents: write
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      # Checks out a copy of your repository on the ubuntu-latest machine
+      - uses: actions/checkout@v4
+
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - id: create-release
+        uses: ncipollo/release-action@v1
+        with:
+          body: 'Lair binaries for Linux/Windows/macOS.'
+          prerelease: true
+          skipIfReleaseExists: true
+          tag: lair-binaries-${{ inputs.lair-version }}
+
+      - name: install Rust stable
+        uses: actions-rs/toolchain@v1
+        with:
+          override: true
+          toolchain: stable
+
+      - name: setup binaries (Windows only)
+        if: matrix.platform == 'windows-2019'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cargo install lair_keystore --version ${{ inputs.lair-version }}
+          $LkPath = Get-Command lair-keystore | Select-Object -ExpandProperty Definition
+          Copy-Item $LkPath -Destination "lair-keystore-v{{ inputs.lair-version }}-x86_64-pc-windows-msvc.exe"
+          gh release upload "lair-binaries-${{ inputs.lair-version }}" "lair-keystore-v${{ inputs.lair-version }}-x86_64-pc-windows-msvc.exe"
+      - name: setup binaries (macos only)
+        if: matrix.platform == 'macos-11'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cargo install lair_keystore --version ${{ inputs.lair-version }}
+          LAIR_PATH=$(which lair-keystore)
+          cp $LAIR_PATH lair-keystore-v${{ inputs.lair-version }}-x86_64-apple-darwin
+          gh release upload "lair-binaries-${{ inputs.lair-version }}" "lair-keystore-v${{ inputs.lair-version }}-x86_64-apple-darwin"
+      - name: setup binaries (ubuntu only)
+        if: matrix.platform == 'ubuntu-22.04'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cargo install lair_keystore --version ${{ inputs.lair-version }}
+          LAIR_PATH=$(which lair-keystore)
+          cp $LAIR_PATH lair-keystore-v${{ inputs.lair-version }}-x86_64-unknown-linux-gnu
+          gh release upload "lair-binaries-${{ inputs.lair-version }}" "lair-keystore-v${{ inputs.lair-version }}-x86_64-unknown-linux-gnu"
