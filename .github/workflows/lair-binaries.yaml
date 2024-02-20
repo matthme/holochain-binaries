@@ -46,7 +46,13 @@ jobs:
         run: |
           cargo install lair_keystore --version ${{ inputs.lair-version }}
           $LkPath = Get-Command lair-keystore | Select-Object -ExpandProperty Definition
+          echo "lair-keystore binary at path:"
+          echo $LkPath
           Copy-Item $LkPath -Destination "lair-keystore-v{{ inputs.lair-version }}-x86_64-pc-windows-msvc.exe"
+          echo "testing path lair-keystore-v{{ inputs.lair-version }}-x86_64-pc-windows-msvc.exe"
+          Test-Path lair-keystore-v{{ inputs.lair-version }}-x86_64-pc-windows-msvc.exe
+          echo "checked  whether file exists"
+
           gh release upload "lair-binaries-${{ inputs.lair-version }}" "lair-keystore-v${{ inputs.lair-version }}-x86_64-pc-windows-msvc.exe"
       - name: setup binaries (macos only)
         if: matrix.platform == 'macos-11'
