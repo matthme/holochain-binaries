@@ -31,6 +31,16 @@ jobs:
           override: true
           toolchain: stable
 
+      - name: Install vcpkg Packages
+        if: matrix.os == 'windows-2019'
+        uses: johnwason/vcpkg-action@v6
+        id: vcpkg
+        with:
+          pkgs: libsodium
+          triplet: x64-windows-release
+          token: ${{ github.token }}
+          github-binarycache: true
+
       - name: setup binaries (Windows only)
         if: matrix.platform == 'windows-2019'
         env:

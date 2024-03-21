@@ -1,15 +1,15 @@
 name: 'release-holochain-binaries-manually'
 on:
   push:
-    tags:
-      - 'holochain-binaries-*'
+    branches:
+      - dev-windows-release
 
 jobs:
   publish-holochain-binaries:
     strategy:
       fail-fast: false
       matrix:
-        platform: [windows-2019, macos-11, ubuntu-22.04]
+        platform: [windows-2019]
     permissions:
       contents: write
     runs-on: ${{ matrix.platform }}
@@ -18,12 +18,12 @@ jobs:
       # Checks out a copy of your repository on the ubuntu-latest machine
       - uses: actions/checkout@v4
 
-      - id: create-release
-        uses: ncipollo/release-action@v1
-        with:
-          body: 'Holochain binaries for Linux/Windows/macOS.'
-          prerelease: true
-          skipIfReleaseExists: true
+      # - id: create-release
+      #   uses: ncipollo/release-action@v1
+      #   with:
+      #     body: 'Holochain binaries for Linux/Windows/macOS.'
+      #     prerelease: true
+      #     skipIfReleaseExists: true
 
       - name: install Rust stable
         uses: actions-rs/toolchain@v1
@@ -36,6 +36,18 @@ jobs:
         with:
           go-version: 'stable'
 
+
+      - name: Install vcpkg Packages
+        if: matrix.os == 'windows-2019'
+        uses: johnwason/vcpkg-action@v6
+        id: vcpkg
+        with:
+          pkgs: libsodium
+          triplet: x64-windows-release
+          token: ${{ github.token }}
+          github-binarycache: true
+
+
       - name: setup binaries (Windows only)
         if: matrix.platform == 'windows-2019'
         env:
@@ -43,6 +55,7 @@ jobs:
         run: |
 
           $env:HOLOCHAIN_VERSION = $(node -p -e "require('./config.json').holochainVersion")
+          $env:SODIUM_LIB_DIR="$(pwd)\vcpkg\packages\libsodium_x64-windows-release\lib"
 
           cargo install holochain --git https://github.com/holochain/holochain --rev c3eec1b95449c8e9538c7b761a01048b4424c5e4
           $HcPath = Get-Command holochain | Select-Object -ExpandProperty Definition
