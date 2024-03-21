@@ -57,7 +57,7 @@ jobs:
           $env:HOLOCHAIN_VERSION = $(node -p -e "require('./config.json').holochainVersion")
           $env:SODIUM_LIB_DIR="$(pwd)\vcpkg\packages\libsodium_x64-windows-release\lib"
 
-          cargo install holochain --git https://github.com/holochain/holochain --rev c3eec1b95449c8e9538c7b761a01048b4424c5e4
+          cargo install holochain --git https://github.com/matthme/holochain --rev d36fc920f5bbe4ab61b5c7c587cf5a1f78525ccc
           $HcPath = Get-Command holochain | Select-Object -ExpandProperty Definition
           Copy-Item $HcPath -Destination holochain-v$env:HOLOCHAIN_VERSION-x86_64-pc-windows-msvc.exe
 
