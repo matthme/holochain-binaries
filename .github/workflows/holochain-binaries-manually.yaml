@@ -21,12 +21,12 @@ jobs:
       # Checks out a copy of your repository on the ubuntu-latest machine
       - uses: actions/checkout@v4
 
-      - id: create-release
-        uses: ncipollo/release-action@v1
-        with:
-          body: 'Holochain binaries for Linux/Windows/macOS.'
-          prerelease: true
-          skipIfReleaseExists: true
+      # - id: create-release
+      #   uses: ncipollo/release-action@v1
+      #   with:
+      #     body: 'Holochain binaries for Linux/Windows/macOS.'
+      #     prerelease: true
+      #     skipIfReleaseExists: true
 
       - name: install Rust stable
         uses: actions-rs/toolchain@v1
@@ -64,7 +64,7 @@ jobs:
           $HcPath = Get-Command holochain | Select-Object -ExpandProperty Definition
           Copy-Item $HcPath -Destination holochain-v$env:HOLOCHAIN_VERSION-x86_64-pc-windows-msvc.exe
 
-          gh release upload --clobber "$($env:GITHUB_REF -replace "refs/tags/")" "holochain-v$env:HOLOCHAIN_VERSION-x86_64-pc-windows-msvc.exe"
+          gh release upload --clobber "holochain-binaries-0.3.0-beta-dev.42-1ddfd2d" "holochain-v$env:HOLOCHAIN_VERSION-x86_64-pc-windows-msvc.exe"
 
       - name: setup binaries (macos only)
         if: matrix.platform == 'macos-11'
