@@ -1,17 +1,18 @@
 name: 'release-holochain-binaries-manually'
 on:
   push:
-    tags:
-      - 'holochain-binaries-*'
-    # branches:
-    #   - dev-windows-release
+    # tags:
+    #   - 'holochain-binaries-*'
+    branches:
+      - release-0.3.0-beta-dev.42-1ddfd2d
 
 jobs:
   publish-holochain-binaries:
     strategy:
       fail-fast: false
       matrix:
-        platform: [windows-2019, macos-11, ubuntu-22.04]
+        platform: [windows-2019]
+        # platform: [windows-2019, macos-11, ubuntu-22.04]
     permissions:
       contents: write
     runs-on: ${{ matrix.platform }}
@@ -39,15 +40,15 @@ jobs:
           go-version: 'stable'
 
 
-      - name: Install vcpkg Packages
-        if: matrix.platform == 'windows-2019'
-        uses: johnwason/vcpkg-action@v6
-        id: vcpkg
-        with:
-          pkgs: libsodium
-          triplet: x64-windows-release
-          token: ${{ github.token }}
-          github-binarycache: true
+      # - name: Install vcpkg Packages
+      #   if: matrix.platform == 'windows-2019'
+      #   uses: johnwason/vcpkg-action@v6
+      #   id: vcpkg
+      #   with:
+      #     pkgs: libsodium
+      #     triplet: x64-windows-release
+      #     token: ${{ github.token }}
+      #     github-binarycache: true
 
 
       - name: setup binaries (Windows only)
@@ -57,13 +58,13 @@ jobs:
         run: |
 
           $env:HOLOCHAIN_VERSION = $(node -p -e "require('./config.json').holochainVersion")
-          $env:SODIUM_LIB_DIR="$(pwd)\vcpkg\packages\libsodium_x64-windows-release\lib"
+          # $env:SODIUM_LIB_DIR="$(pwd)\vcpkg\packages\libsodium_x64-windows-release\lib"
 
           cargo install holochain --git https://github.com/matthme/holochain --rev 25b2da432ad0067dcd3099008dc4c2b53a2ba971
           $HcPath = Get-Command holochain | Select-Object -ExpandProperty Definition
           Copy-Item $HcPath -Destination holochain-v$env:HOLOCHAIN_VERSION-x86_64-pc-windows-msvc.exe
 
-          gh release upload "$($env:GITHUB_REF -replace "refs/tags/")" "holochain-v$env:HOLOCHAIN_VERSION-x86_64-pc-windows-msvc.exe"
+          gh release upload --clobber "$($env:GITHUB_REF -replace "refs/tags/")" "holochain-v$env:HOLOCHAIN_VERSION-x86_64-pc-windows-msvc.exe"
 
       - name: setup binaries (macos only)
         if: matrix.platform == 'macos-11'
