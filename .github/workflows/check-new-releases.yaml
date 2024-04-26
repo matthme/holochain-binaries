@@ -1,11 +1,11 @@
 name: Check for new releases
-on:
-  schedule:
-    - cron:  '0 * * * *'
 # on:
-#   push:
-#     branches:
-#       - main
+#   schedule:
+#     - cron:  '0 * * * *'
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   check-new-01-releases:
@@ -101,3 +101,17 @@ jobs:
     uses: ./.github/workflows/lair-binaries.yaml
     with:
       lair-version: ${{ needs.check-new-lair-releases.outputs.lair-version }}
+
+  check-new-hc-releases:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Check for new hc releases
+        id: check_releases
+        run: |
+          echo "hc_version=$(node ./scripts/check-new-hc-releases.mjs)" >> $GITHUB_OUTPUT
+    outputs:
+      hc-version: ${{ steps.check_releases.outputs.hc_version }}
