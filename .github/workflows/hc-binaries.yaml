@@ -61,7 +61,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cargo install holochain_cli --version ${{ inputs.hc-version }}
-          HC_PATH=$(which holochain_cli)
+          HC_PATH=$(which hc)
           cp $HC_PATH hc-v${{ inputs.hc-version }}-x86_64-apple-darwin
 
           gh release upload "hc-binaries-${{ inputs.hc-version }}" "hc-v${{ inputs.hc-version }}-x86_64-apple-darwin"
@@ -72,7 +72,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cargo install holochain_cli --version ${{ inputs.hc-version }}
-          HC_PATH=$(which holochain_cli)
+          HC_PATH=$(which hc)
           cp $HC_PATH hc-v${{ inputs.hc-version }}-x86_64-unknown-linux-gnu
 
           gh release upload "hc-binaries-${{ inputs.hc-version }}" "hc-v${{ inputs.hc-version }}-x86_64-unknown-linux-gnu"
