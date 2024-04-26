@@ -115,3 +115,12 @@ jobs:
           echo "hc_version=$(node ./scripts/check-new-hc-releases.mjs)" >> $GITHUB_OUTPUT
     outputs:
       hc-version: ${{ steps.check_releases.outputs.hc_version }}
+
+  build-hc-binaries:
+    permissions:
+      contents: write
+    needs: check-new-hc-releases
+    if: ${{ needs.check-new-hc-releases.outputs.hc-version }}
+    uses: ./.github/workflows/hc-binaries.yaml
+    with:
+      hc-version: ${{ needs.check-new-hc-releases.outputs.hc-version }}
