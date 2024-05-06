@@ -79,6 +79,31 @@ jobs:
     with:
       holochain-version: ${{ needs.check-new-03-releases.outputs.holochain-version }}
 
+
+  check-new-04-releases:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Check for new holochain releases
+        id: check_releases
+        run: |
+          echo "holochain_version=$(node ./scripts/check-new-04-releases.mjs)" >> $GITHUB_OUTPUT
+    outputs:
+      holochain-version: ${{ steps.check_releases.outputs.holochain_version }}
+
+  build-04-binaries:
+    permissions:
+      contents: write
+    needs: check-new-04-releases
+    if: ${{ needs.check-new-04-releases.outputs.holochain-version }}
+    uses: ./.github/workflows/holochain-binaries.yaml
+    with:
+      holochain-version: ${{ needs.check-new-04-releases.outputs.holochain-version }}
+
+
   check-new-lair-releases:
     runs-on: ubuntu-latest
     steps:

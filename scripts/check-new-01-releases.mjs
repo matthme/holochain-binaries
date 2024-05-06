@@ -26,7 +26,7 @@ getAndDo(holochainReleasesOptions, (data) => {
   const recentReleases = allReleases.filter((release) => Date.now() - (new Date(release.published_at)).getTime() < 36000000);
   getAndDo(binariesTagsOptions, (data) => {
     const binaryTags = JSON.parse(data);
-    // Check for holochain 0.2 releases that have not yet a tag in the holochain-binaries repo
+    // Check for holochain 0.1 releases that have not yet a tag in the holochain-binaries repo
     const binaryTagHcVersions = binaryTags.map((tag) => tag.name.replace('-binaries', ''));
     const unbuiltReleases = recentReleases.map((release) => release.tag_name).filter((releaseName) => !binaryTagHcVersions.includes(releaseName));
     const unbuilt01Releases = unbuiltReleases.filter((tagName) => tagName.startsWith('holochain-0.1'));
