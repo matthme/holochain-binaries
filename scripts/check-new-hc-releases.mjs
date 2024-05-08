@@ -13,7 +13,7 @@ const hcCrateOptions = {
 const binariesTagsOptions = {
   hostname: 'api.github.com',
   port: 443,
-  path: '/repos/matthme/holochain-binaries/tags',
+  path: '/repos/matthme/holochain-binaries/git/refs/tags',
   method: 'GET',
   headers: {
     'User-Agent': 'Holochain Binaries'
@@ -28,9 +28,9 @@ getAndDo(hcCrateOptions, (data) => {
   getAndDo(binariesTagsOptions, (data) => {
     const binaryTags = JSON.parse(data);
     // Check whether the latest lair_keystore crate version already has a tag in the holochain-binaries repo. If not, log it to the console
-    const binaryTagHcVersions = binaryTags.filter((tag) => tag.name.includes('hc-binaries')).map((tag) => tag.name.replace('hc-binaries-', ''));
+    const binaryTagHcVersions = binaryTags.filter((tag) => tag.ref.includes('hc-binaries')).map((tag) => tag.ref.replace('refs/tags/hc-binaries-', ''));
     for (const version of latestHcVersions) {
-      if (!binaryTagHcVersions.includes(version) && version !== '0.4.0-dev.0' && version !== '0.3.0-beta-dev.47') {
+      if (!binaryTagHcVersions.includes(version)) {
         console.log(version);
         return;
       }
