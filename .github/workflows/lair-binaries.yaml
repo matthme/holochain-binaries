@@ -53,6 +53,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          rustup target add x86_64-apple-darwin
+          rustup target add aarch64-apple-darwin
+
           cargo install lair_keystore --version ${{ inputs.lair-version }} --target x86_64-apple-darwin
           LAIR_PATH=$(which lair-keystore)
           cp $LAIR_PATH lair-keystore-v${{ inputs.lair-version }}-x86_64-apple-darwin

@@ -60,6 +60,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          rustup target add x86_64-apple-darwin
+          rustup target add aarch64-apple-darwin
+
           cargo install holochain_cli --version ${{ inputs.hc-version }} --target x86_64-apple-darwin --locked
           HC_PATH=$(which hc)
           cp $HC_PATH hc-v${{ inputs.hc-version }}-x86_64-apple-darwin
