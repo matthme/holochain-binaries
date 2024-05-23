@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [windows-2019, macos-11, ubuntu-20.04]
+        platform: [windows-2019, macos-latest, ubuntu-22.04]
     permissions:
       contents: write
     runs-on: ${{ matrix.platform }}
@@ -46,7 +46,7 @@ jobs:
 
 
       - name: setup binaries (macos only)
-        if: matrix.platform == 'macos-11'
+        if: matrix.platform == 'macos-latest'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -59,14 +59,20 @@ jobs:
           gh release upload "${GITHUB_REF#refs/tags/}" "lair-keystore-v$LAIR_VERSION-x86_64-apple-darwin"
 
       - name: setup binaries (ubuntu only)
-        if: matrix.platform == 'ubuntu-20.04'
+        if: matrix.platform == 'ubuntu-22.04'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           LAIR_VERSION=$(node -p -e "require('./config.json').lairVersion")
 
-          cargo install --version $LAIR_VERSION lair_keystore
+          cargo install --version $LAIR_VERSION lair_keystore --target x86_64-apple-darwin
           LAIR_PATH=$(which lair-keystore)
           cp $LAIR_PATH lair-keystore-v$LAIR_VERSION-x86_64-unknown-linux-gnu
 
           gh release upload "${GITHUB_REF#refs/tags/}" "lair-keystore-v$LAIR_VERSION-x86_64-unknown-linux-gnu"
+
+          cargo install --version $LAIR_VERSION lair_keystore --target aarch64-apple-darwin
+          LAIR_PATH=$(which lair-keystore)
+          cp $LAIR_PATH lair-keystore-v$LAIR_VERSION-aarch64-unknown-linux-gnu
+
+          gh release upload "${GITHUB_REF#refs/tags/}" "lair-keystore-v$LAIR_VERSION-aarch64-unknown-linux-gnu"
