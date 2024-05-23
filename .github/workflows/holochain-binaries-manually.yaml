@@ -77,7 +77,7 @@ jobs:
           HOLOCHAIN_PATH=$(which holochain)
           cp $HOLOCHAIN_PATH holochain-v$HOLOCHAIN_VERSION-aarch64-apple-darwin
 
-          gh release upload "${GITHUB_REF#refs/tags/}" "holochain-v$HOLOCHAIN_VERSION-aarch64-apple-darwin"
+          gh release upload "holochain-binaries-0.3.0-beta-dev.42-1ddfd2d" "holochain-v$HOLOCHAIN_VERSION-aarch64-apple-darwin"
 
       - name: setup binaries (ubuntu only)
         if: matrix.platform == 'ubuntu-22.04'
@@ -90,4 +90,4 @@ jobs:
           HOLOCHAIN_PATH=$(which holochain)
           cp $HOLOCHAIN_PATH holochain-v$HOLOCHAIN_VERSION-x86_64-unknown-linux-gnu
 
-          gh release upload "${GITHUB_REF#refs/tags/}" "holochain-v$HOLOCHAIN_VERSION-x86_64-unknown-linux-gnu"
+          gh release upload "holochain-binaries-0.3.0-beta-dev.42-1ddfd2d" "holochain-v$HOLOCHAIN_VERSION-x86_64-unknown-linux-gnu"
