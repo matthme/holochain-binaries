@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [windows-2019, macos-11, ubuntu-22.04]
+        platform: [windows-2019, macos-latest, ubuntu-22.04]
     permissions:
       contents: write
     runs-on: ${{ matrix.platform }}
@@ -49,14 +49,24 @@ jobs:
           Copy-Item $LkPath -Destination "lair-keystore-v${{ inputs.lair-version }}-x86_64-pc-windows-msvc.exe"
           gh release upload "lair-binaries-${{ inputs.lair-version }}" "lair-keystore-v${{ inputs.lair-version }}-x86_64-pc-windows-msvc.exe"
       - name: setup binaries (macos only)
-        if: matrix.platform == 'macos-11'
+        if: matrix.platform == 'macos-latest'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cargo install lair_keystore --version ${{ inputs.lair-version }}
+          rustup target add x86_64-apple-darwin
+          rustup target add aarch64-apple-darwin
+
+          cargo install lair_keystore --version ${{ inputs.lair-version }} --target x86_64-apple-darwin
           LAIR_PATH=$(which lair-keystore)
           cp $LAIR_PATH lair-keystore-v${{ inputs.lair-version }}-x86_64-apple-darwin
           gh release upload "lair-binaries-${{ inputs.lair-version }}" "lair-keystore-v${{ inputs.lair-version }}-x86_64-apple-darwin"
+
+          cargo install lair_keystore --version ${{ inputs.lair-version }} --target aarch64-apple-darwin
+          LAIR_PATH=$(which lair-keystore)
+          cp $LAIR_PATH lair-keystore-v${{ inputs.lair-version }}-aarch64-apple-darwin
+          gh release upload "lair-binaries-${{ inputs.lair-version }}" "lair-keystore-v${{ inputs.lair-version }}-aarch64-apple-darwin"
+
+
       - name: setup binaries (ubuntu only)
         if: matrix.platform == 'ubuntu-22.04'
         env:

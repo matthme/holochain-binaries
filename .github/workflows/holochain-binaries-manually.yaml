@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [windows-2019, macos-11, ubuntu-22.04]
+        platform: [windows-2019, macos-latest, ubuntu-22.04]
     permissions:
       contents: write
     runs-on: ${{ matrix.platform }}
@@ -51,17 +51,27 @@ jobs:
           gh release upload "$($env:GITHUB_REF -replace "refs/tags/")" "holochain-v$env:HOLOCHAIN_VERSION-x86_64-pc-windows-msvc.exe"
 
       - name: setup binaries (macos only)
-        if: matrix.platform == 'macos-11'
+        if: matrix.platform == 'macos-latest'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          rustup target add x86_64-apple-darwin
+          rustup target add aarch64-apple-darwin
+
           HOLOCHAIN_VERSION=$(node -p -e "require('./config.json').holochainVersion")
 
-          cargo install holochain --version $HOLOCHAIN_VERSION --locked
+          cargo install holochain --version $HOLOCHAIN_VERSION --target x86_64-apple-darwin --locked
           HOLOCHAIN_PATH=$(which holochain)
           cp $HOLOCHAIN_PATH holochain-v$HOLOCHAIN_VERSION-x86_64-apple-darwin
 
           gh release upload "${GITHUB_REF#refs/tags/}" "holochain-v$HOLOCHAIN_VERSION-x86_64-apple-darwin"
+
+          cargo install holochain --version $HOLOCHAIN_VERSION --target aarch64-apple-darwin --locked
+          HOLOCHAIN_PATH=$(which holochain)
+          cp $HOLOCHAIN_PATH holochain-v$HOLOCHAIN_VERSION-aarch64-apple-darwin
+
+          gh release upload "${GITHUB_REF#refs/tags/}" "holochain-v$HOLOCHAIN_VERSION-aarch64-apple-darwin"
+
 
       - name: setup binaries (ubuntu only)
         if: matrix.platform == 'ubuntu-22.04'

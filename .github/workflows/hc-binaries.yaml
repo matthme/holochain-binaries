@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [windows-2019, macos-11, ubuntu-22.04]
+        platform: [windows-2019, macos-latest, ubuntu-22.04]
     permissions:
       contents: write
     runs-on: ${{ matrix.platform }}
@@ -56,15 +56,24 @@ jobs:
           gh release upload "hc-binaries-${{ inputs.hc-version }}" "hc-v${{ inputs.hc-version }}-x86_64-pc-windows-msvc.exe"
 
       - name: setup binaries (macos only)
-        if: matrix.platform == 'macos-11'
+        if: matrix.platform == 'macos-latest'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cargo install holochain_cli --version ${{ inputs.hc-version }} --locked
+          rustup target add x86_64-apple-darwin
+          rustup target add aarch64-apple-darwin
+
+          cargo install holochain_cli --version ${{ inputs.hc-version }} --target x86_64-apple-darwin --locked
           HC_PATH=$(which hc)
           cp $HC_PATH hc-v${{ inputs.hc-version }}-x86_64-apple-darwin
 
           gh release upload "hc-binaries-${{ inputs.hc-version }}" "hc-v${{ inputs.hc-version }}-x86_64-apple-darwin"
+
+          cargo install holochain_cli --version ${{ inputs.hc-version }} --target aarch64-apple-darwin --locked
+          HC_PATH=$(which hc)
+          cp $HC_PATH hc-v${{ inputs.hc-version }}-aarch64-apple-darwin
+
+          gh release upload "hc-binaries-${{ inputs.hc-version }}" "hc-v${{ inputs.hc-version }}-aarch64-apple-darwin"
 
       - name: setup binaries (ubuntu only)
         if: matrix.platform == 'ubuntu-22.04'
