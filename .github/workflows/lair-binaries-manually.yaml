@@ -1,15 +1,20 @@
 name: 'release-lair-binaries-manually'
+# on:
+#   push:
+#     tags:
+#       - 'lair-binaries-*'
 on:
   push:
-    tags:
-      - 'lair-binaries-*'
+    branches:
+      - lair-0.4.4-arm64
 
 jobs:
   publish-lair-binaries:
     strategy:
       fail-fast: false
       matrix:
-        platform: [windows-2019, macos-latest, ubuntu-22.04]
+        # platform: [windows-2019, macos-latest, ubuntu-22.04]
+        platform: [macos-latest]
     permissions:
       contents: write
     runs-on: ${{ matrix.platform }}
@@ -50,16 +55,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          rustup target add x86_64-apple-darwin
           rustup target add aarch64-apple-darwin
 
           LAIR_VERSION=$(node -p -e "require('./config.json').lairVersion")
 
-          cargo install --version $LAIR_VERSION lair_keystore
+          cargo install --version $LAIR_VERSION lair_keystore --target aarch64-apple-darwin
           LAIR_PATH=$(which lair-keystore)
-          cp $LAIR_PATH lair-keystore-v$LAIR_VERSION-x86_64-apple-darwin
+          cp $LAIR_PATH lair-keystore-v$LAIR_VERSION-aarch64-apple-darwin
 
-          gh release upload "${GITHUB_REF#refs/tags/}" "lair-keystore-v$LAIR_VERSION-x86_64-apple-darwin"
+          gh release upload "lair-binaries-0.4.4" "lair-keystore-v$LAIR_VERSION-aarch64-apple-darwin"
 
       - name: setup binaries (ubuntu only)
         if: matrix.platform == 'ubuntu-22.04'
