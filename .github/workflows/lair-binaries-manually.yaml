@@ -55,11 +55,17 @@ jobs:
 
           LAIR_VERSION=$(node -p -e "require('./config.json').lairVersion")
 
-          cargo install --version $LAIR_VERSION lair_keystore
+          cargo install --version $LAIR_VERSION lair_keystore --target x86_64-apple-darwin
           LAIR_PATH=$(which lair-keystore)
           cp $LAIR_PATH lair-keystore-v$LAIR_VERSION-x86_64-apple-darwin
 
           gh release upload "${GITHUB_REF#refs/tags/}" "lair-keystore-v$LAIR_VERSION-x86_64-apple-darwin"
+
+          cargo install --version $LAIR_VERSION lair_keystore --target aarch64-apple-darwin
+          LAIR_PATH=$(which lair-keystore)
+          cp $LAIR_PATH lair-keystore-v$LAIR_VERSION-aarch64-apple-darwin
+
+          gh release upload "${GITHUB_REF#refs/tags/}" "lair-keystore-v$LAIR_VERSION-aarch64-apple-darwin"
 
       - name: setup binaries (ubuntu only)
         if: matrix.platform == 'ubuntu-22.04'
