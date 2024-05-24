@@ -23,12 +23,12 @@ jobs:
       # Checks out a copy of your repository on the ubuntu-latest machine
       - uses: actions/checkout@v3
 
-      - id: create-release
-        uses: ncipollo/release-action@v1
-        with:
-          body: 'Lair binaries for Linux/Windows/macOS.'
-          prerelease: true
-          skipIfReleaseExists: true
+      # - id: create-release
+      #   uses: ncipollo/release-action@v1
+      #   with:
+      #     body: 'Lair binaries for Linux/Windows/macOS.'
+      #     prerelease: true
+      #     skipIfReleaseExists: true
 
       - name: install Rust stable
         uses: actions-rs/toolchain@v1
