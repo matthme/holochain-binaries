@@ -1,5 +1,5 @@
 name: Check for new releases
-on:
+# on:
   # schedule:
   #   - cron:  '0 * * * *'
 on:
