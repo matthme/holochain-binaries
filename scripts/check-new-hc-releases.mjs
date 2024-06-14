@@ -25,10 +25,9 @@ getAndDo(hcCrateOptions, (data) => {
   // const latestHcVersion = hcCrateDetails.crate.newest_version;
   // check for last 3 versions
   const latestHcVersions = hcCrateDetails.versions.sort((va, vb) => vb.created_at.localeCompare(va.created_at)).slice(0,3).map(v => v.num);
-  console.log("latestHcVersions: ", latestHcVersions);
   getAndDo(binariesTagsOptions, (data) => {
     const binaryTags = JSON.parse(data);
-    // Check whether the latest lair_keystore crate version already has a tag in the holochain-binaries repo. If not, log it to the console
+    // Check whether the latest holochain_client crate version already has a tag in the holochain-binaries repo. If not, log it to the console
     const binaryTagHcVersions = binaryTags.filter((tag) => tag.ref.includes('hc-binaries')).map((tag) => tag.ref.replace('refs/tags/hc-binaries-', ''));
     for (const version of latestHcVersions) {
       if (!binaryTagHcVersions.includes(version)) {
