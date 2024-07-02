@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [windows-2019, macos-latest, ubuntu-22.04]
+        platform: [windows-2019, macos-latest, macos-12, ubuntu-22.04]
     permissions:
       contents: write
     runs-on: ${{ matrix.platform }}
@@ -55,19 +55,12 @@ jobs:
 
           gh release upload "holochain-binaries-${{ inputs.holochain-version }}" "holochain-v${{ inputs.holochain-version }}-x86_64-pc-windows-msvc.exe"
 
-      - name: setup binaries (macos only)
+      - name: setup binaries (macos-latest only)
         if: matrix.platform == 'macos-latest'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          rustup target add x86_64-apple-darwin
           rustup target add aarch64-apple-darwin
-
-          cargo install holochain --version ${{ inputs.holochain-version }} --target x86_64-apple-darwin --locked
-          HOLOCHAIN_PATH=$(which holochain)
-          cp $HOLOCHAIN_PATH holochain-v${{ inputs.holochain-version }}-x86_64-apple-darwin
-
-          gh release upload "holochain-binaries-${{ inputs.holochain-version }}" "holochain-v${{ inputs.holochain-version }}-x86_64-apple-darwin"
 
           cargo install holochain --version ${{ inputs.holochain-version }} --target aarch64-apple-darwin --locked
           HOLOCHAIN_PATH=$(which holochain)
@@ -75,6 +68,18 @@ jobs:
 
           gh release upload "holochain-binaries-${{ inputs.holochain-version }}" "holochain-v${{ inputs.holochain-version }}-aarch64-apple-darwin"
 
+      - name: setup binaries (macos-12 only)
+        if: matrix.platform == 'macos-12'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          rustup target add x86_64-apple-darwin
+
+          cargo install holochain --version ${{ inputs.holochain-version }} --target x86_64-apple-darwin --locked
+          HOLOCHAIN_PATH=$(which holochain)
+          cp $HOLOCHAIN_PATH holochain-v${{ inputs.holochain-version }}-x86_64-apple-darwin
+
+          gh release upload "holochain-binaries-${{ inputs.holochain-version }}" "holochain-v${{ inputs.holochain-version }}-x86_64-apple-darwin"
 
       - name: setup binaries (ubuntu only)
         if: matrix.platform == 'ubuntu-22.04'
