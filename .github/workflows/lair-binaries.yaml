@@ -47,6 +47,7 @@ jobs:
           cargo install lair_keystore --version ${{ inputs.lair-version }}
           $LkPath = Get-Command lair-keystore | Select-Object -ExpandProperty Definition
           Copy-Item $LkPath -Destination "lair-keystore-v${{ inputs.lair-version }}-x86_64-pc-windows-msvc.exe"
+          CertUtil -hashfile "lair-keystore-v${{ inputs.lair-version }}-x86_64-pc-windows-msvc.exe" SHA256
           gh release upload "lair-binaries-${{ inputs.lair-version }}" "lair-keystore-v${{ inputs.lair-version }}-x86_64-pc-windows-msvc.exe"
 
       - name: setup binaries (macos-latest only)
@@ -59,6 +60,7 @@ jobs:
           cargo install lair_keystore --version ${{ inputs.lair-version }} --target aarch64-apple-darwin
           LAIR_PATH=$(which lair-keystore)
           cp $LAIR_PATH lair-keystore-v${{ inputs.lair-version }}-aarch64-apple-darwin
+          shasum -a 256 lair-keystore-v${{ inputs.lair-version }}-aarch64-apple-darwin
           gh release upload "lair-binaries-${{ inputs.lair-version }}" "lair-keystore-v${{ inputs.lair-version }}-aarch64-apple-darwin"
 
       - name: setup binaries (macos-12 only)
@@ -71,6 +73,7 @@ jobs:
           cargo install lair_keystore --version ${{ inputs.lair-version }} --target x86_64-apple-darwin
           LAIR_PATH=$(which lair-keystore)
           cp $LAIR_PATH lair-keystore-v${{ inputs.lair-version }}-x86_64-apple-darwin
+          shasum -a 256 lair-keystore-v${{ inputs.lair-version }}-x86_64-apple-darwin
           gh release upload "lair-binaries-${{ inputs.lair-version }}" "lair-keystore-v${{ inputs.lair-version }}-x86_64-apple-darwin"
 
 
@@ -82,4 +85,5 @@ jobs:
           cargo install lair_keystore --version ${{ inputs.lair-version }}
           LAIR_PATH=$(which lair-keystore)
           cp $LAIR_PATH lair-keystore-v${{ inputs.lair-version }}-x86_64-unknown-linux-gnu
+          shasum -a 256 lair-keystore-v${{ inputs.lair-version }}-x86_64-unknown-linux-gnu
           gh release upload "lair-binaries-${{ inputs.lair-version }}" "lair-keystore-v${{ inputs.lair-version }}-x86_64-unknown-linux-gnu"
