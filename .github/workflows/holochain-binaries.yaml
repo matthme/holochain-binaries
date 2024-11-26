@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [windows-2019, macos-latest, macos-12, ubuntu-22.04]
+        platform: [windows-2019, macos-latest, macos-13, ubuntu-22.04]
     permissions:
       contents: write
     runs-on: ${{ matrix.platform }}
@@ -72,8 +72,8 @@ jobs:
 
           gh release upload "holochain-binaries-${{ inputs.holochain-version }}" "holochain-v${{ inputs.holochain-version }}-aarch64-apple-darwin"
 
-      - name: setup binaries (macos-12 only)
-        if: matrix.platform == 'macos-12'
+      - name: setup binaries (macos-13 only)
+        if: matrix.platform == 'macos-13'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
