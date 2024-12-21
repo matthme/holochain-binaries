@@ -13,7 +13,8 @@ const hcCrateOptions = {
 const binariesTagsOptions = {
   hostname: 'api.github.com',
   port: 443,
-  path: '/repos/matthme/holochain-binaries/git/refs/tags',
+  // path: '/repos/matthme/holochain-binaries/git/refs/tags',
+  path: '/repos/pjkundert/holochain-binaries/git/refs/tags',  // revert before merge!
   method: 'GET',
   headers: {
     'User-Agent': 'Holochain Binaries'
