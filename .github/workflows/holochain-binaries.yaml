@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [windows-2019, macos-latest, macos-13, ubuntu-22.04]
+        platform: [windows-2019, macos-latest, ubuntu-24.04]
     permissions:
       contents: write
     runs-on: ${{ matrix.platform }}
@@ -62,22 +62,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          rustup target add aarch64-apple-darwin
-
-          cargo install holochain --version ${{ inputs.holochain-version }} --target aarch64-apple-darwin --locked
-          HOLOCHAIN_PATH=$(which holochain)
-          cp $HOLOCHAIN_PATH holochain-v${{ inputs.holochain-version }}-aarch64-apple-darwin
-
-          shasum -a 256 holochain-v${{ inputs.holochain-version }}-aarch64-apple-darwin
-
-          gh release upload "holochain-binaries-${{ inputs.holochain-version }}" "holochain-v${{ inputs.holochain-version }}-aarch64-apple-darwin"
-
-      - name: setup binaries (macos-13 only)
-        if: matrix.platform == 'macos-13'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
           rustup target add x86_64-apple-darwin
+          rustup target add aarch64-apple-darwin
 
           cargo install holochain --version ${{ inputs.holochain-version }} --target x86_64-apple-darwin --locked
           HOLOCHAIN_PATH=$(which holochain)
@@ -87,15 +73,34 @@ jobs:
 
           gh release upload "holochain-binaries-${{ inputs.holochain-version }}" "holochain-v${{ inputs.holochain-version }}-x86_64-apple-darwin"
 
+          cargo install holochain --version ${{ inputs.holochain-version }} --target aarch64-apple-darwin --locked
+          HOLOCHAIN_PATH=$(which holochain)
+          cp $HOLOCHAIN_PATH holochain-v${{ inputs.holochain-version }}-aarch64-apple-darwin
+
+          shasum -a 256 holochain-v${{ inputs.holochain-version }}-aarch64-apple-darwin
+
+          gh release upload "holochain-binaries-${{ inputs.holochain-version }}" "holochain-v${{ inputs.holochain-version }}-aarch64-apple-darwin"
+
       - name: setup binaries (ubuntu only)
-        if: matrix.platform == 'ubuntu-22.04'
+        if: matrix.platform == 'ubuntu-24.04'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cargo install holochain --version ${{ inputs.holochain-version }} --locked
+          rustup target add x86_64-unknown-linux-gnu
+          rustup target add aarch64-unknown-linux-gnu
+
+          cargo install holochain --version ${{ inputs.holochain-version }} --target x86_64-unknown-linux-gnu --locked
           HOLOCHAIN_PATH=$(which holochain)
           cp $HOLOCHAIN_PATH holochain-v${{ inputs.holochain-version }}-x86_64-unknown-linux-gnu
 
           shasum -a 256 holochain-v${{ inputs.holochain-version }}-x86_64-unknown-linux-gnu
 
           gh release upload "holochain-binaries-${{ inputs.holochain-version }}" "holochain-v${{ inputs.holochain-version }}-x86_64-unknown-linux-gnu"
+
+          cargo install holochain --version ${{ inputs.holochain-version }} --target aarch64-unknown-linux-gnu --locked
+          HOLOCHAIN_PATH=$(which holochain)
+          cp $HOLOCHAIN_PATH holochain-v${{ inputs.holochain-version }}-aarch64-unknown-linux-gnu
+
+          shasum -a 256 holochain-v${{ inputs.holochain-version }}-aarch64-unknown-linux-gnu
+
+          gh release upload "holochain-binaries-${{ inputs.holochain-version }}" "holochain-v${{ inputs.holochain-version }}-aarch64-unknown-linux-gnu"

@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [windows-2019, macos-latest, ubuntu-22.04]
+        platform: [windows-2019, macos-latest, ubuntu-24.04]
     permissions:
       contents: write
     runs-on: ${{ matrix.platform }}
@@ -76,12 +76,21 @@ jobs:
           gh release upload "hc-binaries-${{ inputs.hc-version }}" "hc-v${{ inputs.hc-version }}-aarch64-apple-darwin"
 
       - name: setup binaries (ubuntu only)
-        if: matrix.platform == 'ubuntu-22.04'
+        if: matrix.platform == 'ubuntu-24.04'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cargo install holochain_cli --version ${{ inputs.hc-version }} --locked
+          rustup target add x86_64-unknown-linux-gnu
+          rustup target add aarch64-unknown-linux-gnu
+
+          cargo install holochain_cli --version ${{ inputs.hc-version }} --target x86_64-unknown-linux-gnu --locked
           HC_PATH=$(which hc)
           cp $HC_PATH hc-v${{ inputs.hc-version }}-x86_64-unknown-linux-gnu
 
           gh release upload "hc-binaries-${{ inputs.hc-version }}" "hc-v${{ inputs.hc-version }}-x86_64-unknown-linux-gnu"
+
+          cargo install holochain_cli --version ${{ inputs.hc-version }} --target aarch64-unknown-linux-gnu --locked
+          HC_PATH=$(which hc)
+          cp $HC_PATH hc-v${{ inputs.hc-version }}-aarch64-unknown-linux-gnu
+
+          gh release upload "hc-binaries-${{ inputs.hc-version }}" "hc-v${{ inputs.hc-version }}-aarch64-unknown-linux-gnu"
