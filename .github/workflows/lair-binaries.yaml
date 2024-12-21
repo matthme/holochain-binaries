@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [windows-2019, macos-latest, macos-13, ubuntu-22.04]
+        platform: [windows-2019, macos-latest, ubuntu-24.04]
     permissions:
       contents: write
     runs-on: ${{ matrix.platform }}
@@ -55,20 +55,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          rustup target add aarch64-apple-darwin
-
-          cargo install lair_keystore --version ${{ inputs.lair-version }} --target aarch64-apple-darwin
-          LAIR_PATH=$(which lair-keystore)
-          cp $LAIR_PATH lair-keystore-v${{ inputs.lair-version }}-aarch64-apple-darwin
-          shasum -a 256 lair-keystore-v${{ inputs.lair-version }}-aarch64-apple-darwin
-          gh release upload "lair-binaries-${{ inputs.lair-version }}" "lair-keystore-v${{ inputs.lair-version }}-aarch64-apple-darwin"
-
-      - name: setup binaries (macos-13 only)
-        if: matrix.platform == 'macos-13'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
           rustup target add x86_64-apple-darwin
+          rustup target add aarch64-apple-darwin
 
           cargo install lair_keystore --version ${{ inputs.lair-version }} --target x86_64-apple-darwin
           LAIR_PATH=$(which lair-keystore)
@@ -76,14 +64,28 @@ jobs:
           shasum -a 256 lair-keystore-v${{ inputs.lair-version }}-x86_64-apple-darwin
           gh release upload "lair-binaries-${{ inputs.lair-version }}" "lair-keystore-v${{ inputs.lair-version }}-x86_64-apple-darwin"
 
+          cargo install lair_keystore --version ${{ inputs.lair-version }} --target aarch64-apple-darwin
+          LAIR_PATH=$(which lair-keystore)
+          cp $LAIR_PATH lair-keystore-v${{ inputs.lair-version }}-aarch64-apple-darwin
+          shasum -a 256 lair-keystore-v${{ inputs.lair-version }}-aarch64-apple-darwin
+          gh release upload "lair-binaries-${{ inputs.lair-version }}" "lair-keystore-v${{ inputs.lair-version }}-aarch64-apple-darwin"
 
       - name: setup binaries (ubuntu only)
-        if: matrix.platform == 'ubuntu-22.04'
+        if: matrix.platform == 'ubuntu-24.04'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cargo install lair_keystore --version ${{ inputs.lair-version }}
+          rustup target add x86_64-unknown-linux-gnu
+          rustup target add aarch64-unknown-linux-gnu
+
+          cargo install lair_keystore --version ${{ inputs.lair-version }} --target x86_64-unknown-linux-gnu
           LAIR_PATH=$(which lair-keystore)
           cp $LAIR_PATH lair-keystore-v${{ inputs.lair-version }}-x86_64-unknown-linux-gnu
           shasum -a 256 lair-keystore-v${{ inputs.lair-version }}-x86_64-unknown-linux-gnu
           gh release upload "lair-binaries-${{ inputs.lair-version }}" "lair-keystore-v${{ inputs.lair-version }}-x86_64-unknown-linux-gnu"
+
+          cargo install lair_keystore --version ${{ inputs.lair-version }} --target aarch64-unknown-linux-gnu
+          LAIR_PATH=$(which lair-keystore)
+          cp $LAIR_PATH lair-keystore-v${{ inputs.lair-version }}-aarch64-unknown-linux-gnu
+          shasum -a 256 lair-keystore-v${{ inputs.lair-version }}-aarch64-unknown-linux-gnu
+          gh release upload "lair-binaries-${{ inputs.lair-version }}" "lair-keystore-v${{ inputs.lair-version }}-aarch64-unknown-linux-gnu"

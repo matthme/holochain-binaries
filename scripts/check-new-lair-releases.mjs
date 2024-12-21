@@ -13,7 +13,8 @@ const lairCrateOptions = {
 const binariesTagsOptions = {
   hostname: 'api.github.com',
   port: 443,
-  path: '/repos/matthme/holochain-binaries/tags',
+  // path: '/repos/matthme/holochain-binaries/tags',
+  path: '/repos/pjkundert/holochain-binaries/tags',  // revert before merge!
   method: 'GET',
   headers: {
     'User-Agent': 'Holochain Binaries'
