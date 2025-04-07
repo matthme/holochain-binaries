@@ -29,9 +29,9 @@ getAndDo(holochainReleasesOptions, (data) => {
     // Check for holochain 0.5 releases that have not yet a tag in the holochain-binaries repo
     const binaryTagHcVersions = binaryTags.map((tag) => tag.name.replace('-binaries', ''));
     const unbuiltReleases = recentReleases.map((release) => release.tag_name).filter((releaseName) => !binaryTagHcVersions.includes(releaseName));
-    const unbuilt04Releases = unbuiltReleases.filter((tagName) => tagName.startsWith('holochain-0.5'));
+    const unbuilt05Releases = unbuiltReleases.filter((tagName) => tagName.startsWith('holochain-0.5'));
     // We assume that there is only one new release without tag
-    if (unbuilt04Releases.length > 0) {
+    if (unbuilt05Releases.length > 0) {
       console.log(unbuilt04Releases[0].replace('holochain-', ''));
     }
 
