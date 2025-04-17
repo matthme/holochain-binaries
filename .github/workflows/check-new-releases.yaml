@@ -1,11 +1,11 @@
 name: Check for new releases
-on:
-  schedule:
-    - cron:  '0 * * * *'
 # on:
-#   push:
-#     branches:
-#       - main
+#   schedule:
+#     - cron:  '0 * * * *'
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   check-new-03-releases:
@@ -125,3 +125,26 @@ jobs:
     uses: ./.github/workflows/hc-binaries.yaml
     with:
       hc-version: ${{ needs.check-new-hc-releases.outputs.hc-version }}
+
+  check-new-kitsune2-bootstrap-srv-releases:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Check for new kitsune2-bootstrap-srv releases
+        id: check_releases
+        run: |
+          echo "kitsune2_bootstrap_srv_version=$(node ./scripts/check-new-kitsune2-bootstrap-srv-releases.mjs)" >> $GITHUB_OUTPUT
+    outputs:
+      kitsune2-bootstrap-srv-version: ${{ steps.check_releases.outputs.kitsune2_bootstrap_srv }}
+
+  build-kitsune2-bootstrap-srv-binaries:
+    permissions:
+      contents: write
+    needs: check-new-kitsune2-bootstrap-srv-releases
+    if: ${{ needs.check-new-kitsune2-bootstrap-srv-releases.outputs.kitsune2-bootstrap-srv-version }}
+    uses: ./.github/workflows/kitsune2-bootstrap-srv-binaries.yaml
+    with:
+      kitsune2-bootstrap-srv-version: ${{ needs.check-new-kitsune2-bootstrap-srv-releases.outputs.kitsune2-bootstrap-srv-version }}

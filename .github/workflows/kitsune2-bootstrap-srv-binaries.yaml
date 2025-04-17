@@ -1,0 +1,87 @@
+name: 'release-kitsune2-bootstrap-srv-binaries'
+on:
+  workflow_call:
+    inputs:
+      kitsune2-bootstrap-srv-version:
+        required: true
+        type: string
+jobs:
+  publish-kitsune2-bootstrap-srv-binaries:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [windows-2019, macos-latest, ubuntu-22.04]
+    permissions:
+      contents: write
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      # Checks out a copy of your repository on the ubuntu-latest machine
+      - uses: actions/checkout@v4
+
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - id: create-release
+        uses: ncipollo/release-action@v1
+        with:
+          body: 'kitsune2-bootstrap-srv binaries for Linux/Windows/macOS.'
+          prerelease: true
+          skipIfReleaseExists: true
+          tag: kitsune2-bootstrap-srv-binaries-${{ inputs.kitsune2-bootstrap-srv-version }}
+
+      - name: install Rust stable
+        uses: actions-rs/toolchain@v1
+        with:
+          override: true
+          toolchain: stable
+
+      - name: install Go stable
+        uses: actions/setup-go@v4
+        with:
+          go-version: 'stable'
+
+      - name: setup binaries (Windows only)
+        if: matrix.platform == 'windows-2019'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cargo install kitsune2_bootstrap_srv --version ${{ inputs.kitsune2-bootstrap-srv-version }} --locked
+          $BootstrapSrvPath = Get-Command kitsune2-bootstrap-srv | Select-Object -ExpandProperty Definition
+          Copy-Item $BootstrapSrvPath -Destination kitsune2-bootstrap-srv-v${{ inputs.kitsune2-bootstrap-srv-version }}-x86_64-pc-windows-msvc.exe
+
+          gh release upload "kitsune2-bootstrap-srv-binaries-${{ inputs.kitsune2-bootstrap-srv-version }}" "kitsune2-bootstrap-srv-v${{ inputs.kitsune2-bootstrap-srv-version }}-x86_64-pc-windows-msvc.exe"
+
+      - name: setup binaries (macos only)
+        if: matrix.platform == 'macos-latest'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          rustup target add x86_64-apple-darwin
+          rustup target add aarch64-apple-darwin
+
+          cargo install kitsune2_bootstrap_srv --version ${{ inputs.kitsune2-bootstrap-srv-version }} --target x86_64-apple-darwin --locked
+          BOOTSTRAP_SRV_PATH=$(which kitsune2-bootstrap-srv)
+          cp $BOOTSTRAP_SRV_PATH kitsune2-bootstrap-srv-v${{ inputs.kitsune2-bootstrap-srv-version }}-x86_64-apple-darwin
+
+          gh release upload "kitsune2-bootstrap-srv-binaries-${{ inputs.kitsune2-bootstrap-srv-version }}" "kitsune2-bootstrap-srv-v${{ inputs.kitsune2-bootstrap-srv-version }}-x86_64-apple-darwin"
+
+          cargo install kitsune2_bootstrap_srv --version ${{ inputs.kitsune2-bootstrap-srv-version }} --target aarch64-apple-darwin --locked
+          BOOTSTRAP_SRV_PATH=$(which kitsune2-bootstrap-srv)
+          cp $BOOTSTRAP_SRV_PATH kitsune2-bootstrap-srv-v${{ inputs.kitsune2-bootstrap-srv-version }}-aarch64-apple-darwin
+
+          gh release upload "kitsune2-bootstrap-srv-binaries-${{ inputs.kitsune2-bootstrap-srv-version }}" "kitsune2-bootstrap-srv-v${{ inputs.kitsune2-bootstrap-srv-version }}-aarch64-apple-darwin"
+
+      - name: setup binaries (ubuntu only)
+        if: matrix.platform == 'ubuntu-22.04'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cargo install kitsune2_bootstrap_srv --version ${{ inputs.kitsune2-bootstrap-srv-version }} --locked
+          BOOTSTRAP_SRV_PATH=$(which kitsune2-bootstrap-srv)
+          cp $BOOTSTRAP_SRV_PATH kitsune2-bootstrap-srv-v${{ inputs.kitsune2-bootstrap-srv-version }}-x86_64-unknown-linux-gnu
+
+          gh release upload "kitsune2-bootstrap-srv-binaries-${{ inputs.kitsune2-bootstrap-srv-version }}" "kitsune2-bootstrap-srv-v${{ inputs.kitsune2-bootstrap-srv-version }}-x86_64-unknown-linux-gnu"
