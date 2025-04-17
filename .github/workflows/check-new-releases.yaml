@@ -138,7 +138,7 @@ jobs:
         run: |
           echo "kitsune2_bootstrap_srv_version=$(node ./scripts/check-new-kitsune2-bootstrap-srv-releases.mjs)" >> $GITHUB_OUTPUT
     outputs:
-      kitsune2-bootstrap-srv-version: ${{ steps.check_releases.outputs.kitsune2_bootstrap_srv }}
+      kitsune2-bootstrap-srv-version: ${{ steps.check_releases.outputs.kitsune2_bootstrap_srv_version }}
 
   build-kitsune2-bootstrap-srv-binaries:
     permissions:
