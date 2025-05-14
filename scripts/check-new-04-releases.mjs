@@ -28,7 +28,6 @@ getAndDo(holochainReleasesOptions, (data) => {
     const binaryTags = JSON.parse(data);
     // Check for holochain 0.4 releases that have not yet a tag in the holochain-binaries repo
     const binaryTagHcVersions = binaryTags.map((tag) => tag.ref.replace('refs/tags/', '').replace('-binaries', ''));
-    console.log(binaryTagHcVersions)
 
     const unbuiltReleases = recentReleases.map((release) => release.tag_name).filter((releaseName) => !binaryTagHcVersions.includes(releaseName));
     const unbuilt04Releases = unbuiltReleases.filter((tagName) => tagName.startsWith('holochain-0.4'));
