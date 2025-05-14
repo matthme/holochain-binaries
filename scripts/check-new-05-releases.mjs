@@ -13,7 +13,7 @@ const holochainReleasesOptions = {
 const binariesTagsOptions = {
   hostname: 'api.github.com',
   port: 443,
-  path: '/repos/matthme/holochain-binaries/tags',
+  path: '/repos/matthme/holochain-binaries/git/refs/tags',
   method: 'GET',
   headers: {
     'User-Agent': 'Holochain Binaries'
@@ -27,7 +27,7 @@ getAndDo(holochainReleasesOptions, (data) => {
   getAndDo(binariesTagsOptions, (data) => {
     const binaryTags = JSON.parse(data);
     // Check for holochain 0.5 releases that have not yet a tag in the holochain-binaries repo
-    const binaryTagHcVersions = binaryTags.map((tag) => tag.name.replace('-binaries', ''));
+    const binaryTagHcVersions = binaryTags.map((tag) => tag.ref.replace('refs/tags/', '').replace('-binaries', ''));
     const unbuiltReleases = recentReleases.map((release) => release.tag_name).filter((releaseName) => !binaryTagHcVersions.includes(releaseName));
     const unbuilt05Releases = unbuiltReleases.filter((tagName) => tagName.startsWith('holochain-0.5'));
     // We assume that there is only one new release without tag
