@@ -53,6 +53,8 @@ jobs:
           $BootstrapSrvPath = Get-Command kitsune2-bootstrap-srv | Select-Object -ExpandProperty Definition
           Copy-Item $BootstrapSrvPath -Destination kitsune2-bootstrap-srv-v${{ inputs.kitsune2-bootstrap-srv-version }}-x86_64-pc-windows-msvc.exe
 
+          CertUtil -hashfile "kitsune2-bootstrap-srv-v${{ inputs.kitsune2-bootstrap-srv-version }}-x86_64-pc-windows-msvc.exe" SHA256
+
           gh release upload "kitsune2-bootstrap-srv-binaries-${{ inputs.kitsune2-bootstrap-srv-version }}" "kitsune2-bootstrap-srv-v${{ inputs.kitsune2-bootstrap-srv-version }}-x86_64-pc-windows-msvc.exe"
 
       - name: setup binaries (macos only)
@@ -67,11 +69,15 @@ jobs:
           BOOTSTRAP_SRV_PATH=$(which kitsune2-bootstrap-srv)
           cp $BOOTSTRAP_SRV_PATH kitsune2-bootstrap-srv-v${{ inputs.kitsune2-bootstrap-srv-version }}-x86_64-apple-darwin
 
+          shasum -a 256 kitsune2-bootstrap-srv-v${{ inputs.kitsune2-bootstrap-srv-version }}-x86_64-apple-darwin
+
           gh release upload "kitsune2-bootstrap-srv-binaries-${{ inputs.kitsune2-bootstrap-srv-version }}" "kitsune2-bootstrap-srv-v${{ inputs.kitsune2-bootstrap-srv-version }}-x86_64-apple-darwin"
 
           cargo install kitsune2_bootstrap_srv --version ${{ inputs.kitsune2-bootstrap-srv-version }} --target aarch64-apple-darwin --locked
           BOOTSTRAP_SRV_PATH=$(which kitsune2-bootstrap-srv)
           cp $BOOTSTRAP_SRV_PATH kitsune2-bootstrap-srv-v${{ inputs.kitsune2-bootstrap-srv-version }}-aarch64-apple-darwin
+
+          shasum -a 256 kitsune2-bootstrap-srv-v${{ inputs.kitsune2-bootstrap-srv-version }}-aarch64-apple-darwin
 
           gh release upload "kitsune2-bootstrap-srv-binaries-${{ inputs.kitsune2-bootstrap-srv-version }}" "kitsune2-bootstrap-srv-v${{ inputs.kitsune2-bootstrap-srv-version }}-aarch64-apple-darwin"
 
@@ -83,5 +89,7 @@ jobs:
           cargo install kitsune2_bootstrap_srv --version ${{ inputs.kitsune2-bootstrap-srv-version }} --locked
           BOOTSTRAP_SRV_PATH=$(which kitsune2-bootstrap-srv)
           cp $BOOTSTRAP_SRV_PATH kitsune2-bootstrap-srv-v${{ inputs.kitsune2-bootstrap-srv-version }}-x86_64-unknown-linux-gnu
+
+          shasum -a 256 kitsune2-bootstrap-srv-v${{ inputs.kitsune2-bootstrap-srv-version }}-x86_64-unknown-linux-gnu
 
           gh release upload "kitsune2-bootstrap-srv-binaries-${{ inputs.kitsune2-bootstrap-srv-version }}" "kitsune2-bootstrap-srv-v${{ inputs.kitsune2-bootstrap-srv-version }}-x86_64-unknown-linux-gnu"

@@ -53,6 +53,8 @@ jobs:
           $HcPath = Get-Command hc | Select-Object -ExpandProperty Definition
           Copy-Item $HcPath -Destination hc-v${{ inputs.hc-version }}-x86_64-pc-windows-msvc.exe
 
+          CertUtil -hashfile "hc-v${{ inputs.hc-version }}-x86_64-pc-windows-msvc.exe" SHA256
+
           gh release upload "hc-binaries-${{ inputs.hc-version }}" "hc-v${{ inputs.hc-version }}-x86_64-pc-windows-msvc.exe"
 
       - name: setup binaries (macos only)
@@ -67,11 +69,15 @@ jobs:
           HC_PATH=$(which hc)
           cp $HC_PATH hc-v${{ inputs.hc-version }}-x86_64-apple-darwin
 
+          shasum -a 256 hc-v${{ inputs.hc-version }}-x86_64-apple-darwin
+
           gh release upload "hc-binaries-${{ inputs.hc-version }}" "hc-v${{ inputs.hc-version }}-x86_64-apple-darwin"
 
           cargo install holochain_cli --version ${{ inputs.hc-version }} --target aarch64-apple-darwin --locked
           HC_PATH=$(which hc)
           cp $HC_PATH hc-v${{ inputs.hc-version }}-aarch64-apple-darwin
+
+          shasum -a 256 hc-v${{ inputs.hc-version }}-aarch64-apple-darwin
 
           gh release upload "hc-binaries-${{ inputs.hc-version }}" "hc-v${{ inputs.hc-version }}-aarch64-apple-darwin"
 
@@ -83,5 +89,7 @@ jobs:
           cargo install holochain_cli --version ${{ inputs.hc-version }} --locked
           HC_PATH=$(which hc)
           cp $HC_PATH hc-v${{ inputs.hc-version }}-x86_64-unknown-linux-gnu
+
+          shasum -a 256 hc-v${{ inputs.hc-version }}-x86_64-unknown-linux-gnu
 
           gh release upload "hc-binaries-${{ inputs.hc-version }}" "hc-v${{ inputs.hc-version }}-x86_64-unknown-linux-gnu"
