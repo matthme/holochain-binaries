@@ -112,6 +112,7 @@ jobs:
           sudo apt install gcc-aarch64-linux-gnu
           sudo apt install g++-aarch64-linux-gnu
 
+          mkdir libsodium
           curl -L --output ./libsodium/LATEST.tar.gz https://github.com/matthme/holochain-binaries/releases/download/libsodium-releases/LATEST.tar.gz
           curl -L --output ./libsodium/LATEST.tar.gz.minisig https://github.com/matthme/holochain-binaries/releases/download/libsodium-releases/LATEST.tar.gz.minisig
           curl -L --output ./libsodium/libsodium-1.0.19-stable.zip https://github.com/matthme/holochain-binaries/releases/download/libsodium-releases/libsodium-1.0.19-stable.zip
