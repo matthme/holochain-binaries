@@ -99,3 +99,28 @@ jobs:
           shasum -a 256 holochain-v${{ inputs.holochain-version }}-x86_64-unknown-linux-gnu
 
           gh release upload "holochain-binaries-${{ inputs.holochain-version }}" "holochain-v${{ inputs.holochain-version }}-x86_64-unknown-linux-gnu"
+
+      - name: setup binaries (aarch64-unknown-linux-gnu)
+        if: matrix.platform == 'ubuntu-22.04'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          rustup target add aarch64-unknown-linux-gnu
+
+          # install gcc compiler for aarch64
+          sudo apt update
+          sudo apt install gcc-aarch64-linux-gnu
+          sudo apt install g++-aarch64-linux-gnu
+
+          curl -L --output ./libsodium/LATEST.tar.gz https://github.com/matthme/holochain-binaries/releases/download/libsodium-releases/LATEST.tar.gz
+          curl -L --output ./libsodium/LATEST.tar.gz.minisig https://github.com/matthme/holochain-binaries/releases/download/libsodium-releases/LATEST.tar.gz.minisig
+          curl -L --output ./libsodium/libsodium-1.0.19-stable.zip https://github.com/matthme/holochain-binaries/releases/download/libsodium-releases/libsodium-1.0.19-stable.zip
+          curl -L --output ./libsodium/libsodium-1.0.19-stable.zip.minisig https://github.com/matthme/holochain-binaries/releases/download/libsodium-releases/libsodium-1.0.19-stable.zip.minisig
+
+          CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc SODIUM_DIST_DIR="$(pwd)/libsodium" cargo install holochain --version ${{ inputs.holochain-version }} --locked --target aarch64-unknown-linux-gnu
+          HOLOCHAIN_PATH=$(which holochain)
+          cp $HOLOCHAIN_PATH holochain-v${{ inputs.holochain-version }}-aarch64-unknown-linux-gnu
+
+          shasum -a 256 holochain-v${{ inputs.holochain-version }}-aarch64-unknown-linux-gnu
+
+          gh release upload "holochain-binaries-${{ inputs.holochain-version }}" "holochain-v${{ inputs.holochain-version }}-aarch64-unknown-linux-gnu"
