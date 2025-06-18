@@ -13,6 +13,10 @@ on:
         required: false
         default: true
         type: boolean
+      x86_64-apple-darwin:
+        required: false
+        default: true
+        type: boolean
       x86_64-unknown-linux-gnu:
         required: false
         default: true
@@ -31,6 +35,10 @@ on:
         default: false
         type: boolean
       aarch64-apple-darwin:
+        required: false
+        default: false
+        type: boolean
+      x86_64-apple-darwin:
         required: false
         default: false
         type: boolean
