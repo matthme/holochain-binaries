@@ -5,6 +5,44 @@ on:
       holochain-version:
         required: true
         type: string
+      x86_64-pc-windows-msvc:
+        required: false
+        default: true
+        type: boolean
+      aarch64-apple-darwin:
+        required: false
+        default: true
+        type: boolean
+      x86_64-unknown-linux-gnu:
+        required: false
+        default: true
+        type: boolean
+      aarch64-unknown-linux-gnu:
+        required: false
+        default: true
+        type: boolean
+  workflow_dispatch:
+    inputs:
+      holochain-version:
+        required: true
+        type: string
+      x86_64-pc-windows-msvc:
+        required: false
+        default: false
+        type: boolean
+      aarch64-apple-darwin:
+        required: false
+        default: false
+        type: boolean
+      x86_64-unknown-linux-gnu:
+        required: false
+        default: false
+        type: boolean
+      aarch64-unknown-linux-gnu:
+        required: false
+        default: false
+        type: boolean
+
 jobs:
   publish-holochain-binaries:
     strategy:
@@ -44,8 +82,8 @@ jobs:
         with:
           go-version: 'stable'
 
-      - name: setup binaries (Windows only)
-        if: matrix.platform == 'windows-2019'
+      - name: setup binaries (x86_64-pc-windows-msvc)
+        if: matrix.platform == 'windows-2019' && ${{ inputs.x86_64-pc-windows-msvc }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -57,8 +95,8 @@ jobs:
 
           gh release upload "holochain-binaries-${{ inputs.holochain-version }}" "holochain-v${{ inputs.holochain-version }}-x86_64-pc-windows-msvc.exe"
 
-      - name: setup binaries (macos-latest only)
-        if: matrix.platform == 'macos-latest'
+      - name: setup binaries (aarch64-apple-darwin)
+        if: matrix.platform == 'macos-latest' && ${{ inputs.aarch64-apple-darwin }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -72,8 +110,8 @@ jobs:
 
           gh release upload "holochain-binaries-${{ inputs.holochain-version }}" "holochain-v${{ inputs.holochain-version }}-aarch64-apple-darwin"
 
-      - name: setup binaries (macos-13 only)
-        if: matrix.platform == 'macos-13'
+      - name: setup binaries (x86_64-apple-darwin)
+        if: matrix.platform == 'macos-13' && ${{ inputs.x86_64-apple-darwin }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -87,8 +125,8 @@ jobs:
 
           gh release upload "holochain-binaries-${{ inputs.holochain-version }}" "holochain-v${{ inputs.holochain-version }}-x86_64-apple-darwin"
 
-      - name: setup binaries (ubuntu only)
-        if: matrix.platform == 'ubuntu-22.04'
+      - name: setup binaries (x86_64-unknown-linux-gnu)
+        if: matrix.platform == 'ubuntu-22.04' && ${{ inputs.x86_64-unknown-linux-gnu }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -101,7 +139,7 @@ jobs:
           gh release upload "holochain-binaries-${{ inputs.holochain-version }}" "holochain-v${{ inputs.holochain-version }}-x86_64-unknown-linux-gnu"
 
       - name: setup binaries (aarch64-unknown-linux-gnu)
-        if: matrix.platform == 'ubuntu-22.04'
+        if: matrix.platform == 'ubuntu-22.04' && ${{ inputs.aarch64-unknown-linux-gnu }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
