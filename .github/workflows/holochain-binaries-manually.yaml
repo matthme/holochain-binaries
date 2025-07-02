@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [windows-2019, macos-latest, ubuntu-22.04]
+        platform: [windows-2022, macos-latest, ubuntu-22.04]
     permissions:
       contents: write
     runs-on: ${{ matrix.platform }}
@@ -37,7 +37,7 @@ jobs:
           go-version: 'stable'
 
       - name: setup binaries (Windows only)
-        if: matrix.platform == 'windows-2019'
+        if: matrix.platform == 'windows-2022'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
