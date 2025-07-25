@@ -86,8 +86,8 @@ jobs:
           override: true
           toolchain: stable
 
-      - name: setup binaries (Windows only)
-        if: matrix.platform == 'windows-2022'
+      - name: setup binaries (x86_64-pc-windows-msvc)
+        if: matrix.platform == 'windows-2022' && inputs.x86_64-pc-windows-msvc == true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -97,8 +97,8 @@ jobs:
           CertUtil -hashfile "lair-keystore-v${{ inputs.lair-version }}-x86_64-pc-windows-msvc.exe" SHA256
           gh release upload "lair-binaries-${{ inputs.lair-version }}" "lair-keystore-v${{ inputs.lair-version }}-x86_64-pc-windows-msvc.exe"
 
-      - name: setup binaries (macos-latest only)
-        if: matrix.platform == 'macos-latest'
+      - name: setup binaries (aarch64-apple-darwin)
+        if: matrix.platform == 'macos-latest' && inputs.aarch64-apple-darwin == true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -110,8 +110,8 @@ jobs:
           shasum -a 256 lair-keystore-v${{ inputs.lair-version }}-aarch64-apple-darwin
           gh release upload "lair-binaries-${{ inputs.lair-version }}" "lair-keystore-v${{ inputs.lair-version }}-aarch64-apple-darwin"
 
-      - name: setup binaries (macos-13 only)
-        if: matrix.platform == 'macos-13'
+      - name: setup binaries (x86_64-apple-darwin)
+        if: matrix.platform == 'macos-13' && inputs.x86_64-apple-darwin == true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -124,7 +124,7 @@ jobs:
           gh release upload "lair-binaries-${{ inputs.lair-version }}" "lair-keystore-v${{ inputs.lair-version }}-x86_64-apple-darwin"
 
       - name: setup binaries (x86_64-unknown-linux-gnu)
-        if: matrix.platform == 'ubuntu-22.04'
+        if: matrix.platform == 'ubuntu-22.04' && inputs.x86_64-unknown-linux-gnu == true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -135,7 +135,7 @@ jobs:
           gh release upload "lair-binaries-${{ inputs.lair-version }}" "lair-keystore-v${{ inputs.lair-version }}-x86_64-unknown-linux-gnu"
 
       - name: setup binaries (aarch64-unknown-linux-gnu)
-        if: matrix.platform == 'ubuntu-22.04-arm'
+        if: matrix.platform == 'ubuntu-22.04-arm' && inputs.aarch64-unknown-linux-gnu == true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
