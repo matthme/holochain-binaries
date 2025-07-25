@@ -1,16 +1,63 @@
-name: 'release-lair-binaries'
+name: "release-lair-binaries"
 on:
   workflow_call:
     inputs:
       lair-version:
         required: true
         type: string
+      x86_64-pc-windows-msvc:
+        required: false
+        default: true
+        type: boolean
+      aarch64-apple-darwin:
+        required: false
+        default: true
+        type: boolean
+      x86_64-apple-darwin:
+        required: false
+        default: true
+        type: boolean
+      x86_64-unknown-linux-gnu:
+        required: false
+        default: true
+        type: boolean
+      aarch64-unknown-linux-gnu:
+        required: false
+        default: true
+        type: boolean
+  workflow_dispatch:
+    inputs:
+      lair-version:
+        required: true
+        type: string
+      x86_64-pc-windows-msvc:
+        required: false
+        default: false
+        type: boolean
+      aarch64-apple-darwin:
+        required: false
+        default: false
+        type: boolean
+      x86_64-apple-darwin:
+        required: false
+        default: false
+        type: boolean
+      x86_64-unknown-linux-gnu:
+        required: false
+        default: false
+        type: boolean
+      aarch64-unknown-linux-gnu:
+        required: false
+        default: false
+        type: boolean
+
 jobs:
   publish-lair-binaries:
     strategy:
       fail-fast: false
       matrix:
-        platform: [windows-2022, macos-latest, macos-13, ubuntu-22.04]
+        platform:
+          [windows-2022, macos-latest, macos-13, ubuntu-22.04, ubuntu-22.04-arm]
     permissions:
       contents: write
     runs-on: ${{ matrix.platform }}
@@ -28,7 +75,7 @@ jobs:
       - id: create-release
         uses: ncipollo/release-action@v1
         with:
-          body: 'Lair binaries for Linux/Windows/macOS.'
+          body: "Lair binaries for Linux/Windows/macOS."
           prerelease: true
           skipIfReleaseExists: true
           tag: lair-binaries-${{ inputs.lair-version }}
@@ -76,8 +123,7 @@ jobs:
           shasum -a 256 lair-keystore-v${{ inputs.lair-version }}-x86_64-apple-darwin
           gh release upload "lair-binaries-${{ inputs.lair-version }}" "lair-keystore-v${{ inputs.lair-version }}-x86_64-apple-darwin"
 
-
-      - name: setup binaries (ubuntu only)
+      - name: setup binaries (x86_64-unknown-linux-gnu)
         if: matrix.platform == 'ubuntu-22.04'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -87,3 +133,14 @@ jobs:
           cp $LAIR_PATH lair-keystore-v${{ inputs.lair-version }}-x86_64-unknown-linux-gnu
           shasum -a 256 lair-keystore-v${{ inputs.lair-version }}-x86_64-unknown-linux-gnu
           gh release upload "lair-binaries-${{ inputs.lair-version }}" "lair-keystore-v${{ inputs.lair-version }}-x86_64-unknown-linux-gnu"
+
+      - name: setup binaries (aarch64-unknown-linux-gnu)
+        if: matrix.platform == 'ubuntu-22.04-arm'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cargo install lair_keystore --version ${{ inputs.lair-version }}
+          LAIR_PATH=$(which lair-keystore)
+          cp $LAIR_PATH lair-keystore-v${{ inputs.lair-version }}-aarch64-unknown-linux-gnu
+          shasum -a 256 lair-keystore-v${{ inputs.lair-version }}-aarch64-unknown-linux-gnu
+          gh release upload "lair-binaries-${{ inputs.lair-version }}" "lair-keystore-v${{ inputs.lair-version }}-aarch64-unknown-linux-gnu"
