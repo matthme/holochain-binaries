@@ -1,16 +1,62 @@
-name: 'release-kitsune2-bootstrap-srv-binaries'
+name: "release-kitsune2-bootstrap-srv-binaries"
 on:
   workflow_call:
     inputs:
       kitsune2-bootstrap-srv-version:
         required: true
         type: string
+      x86_64-pc-windows-msvc:
+        required: false
+        default: true
+        type: boolean
+      aarch64-apple-darwin:
+        required: false
+        default: true
+        type: boolean
+      x86_64-apple-darwin:
+        required: false
+        default: true
+        type: boolean
+      x86_64-unknown-linux-gnu:
+        required: false
+        default: true
+        type: boolean
+      aarch64-unknown-linux-gnu:
+        required: false
+        default: true
+        type: boolean
+  workflow_dispatch:
+    inputs:
+      kitsune2-bootstrap-srv-version:
+        required: true
+        type: string
+      x86_64-pc-windows-msvc:
+        required: false
+        default: false
+        type: boolean
+      aarch64-apple-darwin:
+        required: false
+        default: false
+        type: boolean
+      x86_64-apple-darwin:
+        required: false
+        default: false
+        type: boolean
+      x86_64-unknown-linux-gnu:
+        required: false
+        default: false
+        type: boolean
+      aarch64-unknown-linux-gnu:
+        required: false
+        default: false
+        type: boolean
+
 jobs:
   publish-kitsune2-bootstrap-srv-binaries:
     strategy:
       fail-fast: false
       matrix:
-        platform: [windows-2022, macos-latest, ubuntu-22.04]
+        platform: [windows-2022, macos-latest, ubuntu-22.04, 'ubuntu-22.04-arm']
     permissions:
       contents: write
     runs-on: ${{ matrix.platform }}
@@ -28,7 +74,7 @@ jobs:
       - id: create-release
         uses: ncipollo/release-action@v1
         with:
-          body: 'kitsune2-bootstrap-srv binaries for Linux/Windows/macOS.'
+          body: "kitsune2-bootstrap-srv binaries for Linux/Windows/macOS."
           prerelease: true
           skipIfReleaseExists: true
           tag: kitsune2-bootstrap-srv-binaries-${{ inputs.kitsune2-bootstrap-srv-version }}
@@ -42,10 +88,10 @@ jobs:
       - name: install Go stable
         uses: actions/setup-go@v4
         with:
-          go-version: 'stable'
+          go-version: "stable"
 
-      - name: setup binaries (Windows only)
-        if: matrix.platform == 'windows-2022'
+      - name: setup binaries (x86_64-pc-windows-msvc)
+        if: matrix.platform == 'windows-2022' && inputs.x86_64-pc-windows-msvc == true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -57,21 +103,12 @@ jobs:
 
           gh release upload "kitsune2-bootstrap-srv-binaries-${{ inputs.kitsune2-bootstrap-srv-version }}" "kitsune2-bootstrap-srv-v${{ inputs.kitsune2-bootstrap-srv-version }}-x86_64-pc-windows-msvc.exe"
 
-      - name: setup binaries (macos only)
-        if: matrix.platform == 'macos-latest'
+      - name: setup binaries (aarch64-apple-darwin)
+        if: matrix.platform == 'macos-latest' && inputs.aarch64-apple-darwin == true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          rustup target add x86_64-apple-darwin
           rustup target add aarch64-apple-darwin
-
-          cargo install kitsune2_bootstrap_srv --version ${{ inputs.kitsune2-bootstrap-srv-version }} --target x86_64-apple-darwin --locked
-          BOOTSTRAP_SRV_PATH=$(which kitsune2-bootstrap-srv)
-          cp $BOOTSTRAP_SRV_PATH kitsune2-bootstrap-srv-v${{ inputs.kitsune2-bootstrap-srv-version }}-x86_64-apple-darwin
-
-          shasum -a 256 kitsune2-bootstrap-srv-v${{ inputs.kitsune2-bootstrap-srv-version }}-x86_64-apple-darwin
-
-          gh release upload "kitsune2-bootstrap-srv-binaries-${{ inputs.kitsune2-bootstrap-srv-version }}" "kitsune2-bootstrap-srv-v${{ inputs.kitsune2-bootstrap-srv-version }}-x86_64-apple-darwin"
 
           cargo install kitsune2_bootstrap_srv --version ${{ inputs.kitsune2-bootstrap-srv-version }} --target aarch64-apple-darwin --locked
           BOOTSTRAP_SRV_PATH=$(which kitsune2-bootstrap-srv)
@@ -81,8 +118,23 @@ jobs:
 
           gh release upload "kitsune2-bootstrap-srv-binaries-${{ inputs.kitsune2-bootstrap-srv-version }}" "kitsune2-bootstrap-srv-v${{ inputs.kitsune2-bootstrap-srv-version }}-aarch64-apple-darwin"
 
-      - name: setup binaries (ubuntu only)
-        if: matrix.platform == 'ubuntu-22.04'
+      - name: setup binaries (x86_64-apple-darwin)
+        if: matrix.platform == 'macos-13' && inputs.x86_64-apple-darwin == true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          rustup target add x86_64-apple-darwin
+
+          cargo install kitsune2_bootstrap_srv --version ${{ inputs.kitsune2-bootstrap-srv-version }} --target x86_64-apple-darwin --locked
+          BOOTSTRAP_SRV_PATH=$(which kitsune2-bootstrap-srv)
+          cp $BOOTSTRAP_SRV_PATH kitsune2-bootstrap-srv-v${{ inputs.kitsune2-bootstrap-srv-version }}-x86_64-apple-darwin
+
+          shasum -a 256 kitsune2-bootstrap-srv-v${{ inputs.kitsune2-bootstrap-srv-version }}-x86_64-apple-darwin
+
+          gh release upload "kitsune2-bootstrap-srv-binaries-${{ inputs.kitsune2-bootstrap-srv-version }}" "kitsune2-bootstrap-srv-v${{ inputs.kitsune2-bootstrap-srv-version }}-x86_64-apple-darwin"
+
+      - name: setup binaries (x86_64-unknown-linux-gnu)
+        if: matrix.platform == 'ubuntu-22.04' && inputs.x86_64-unknown-linux-gnu == true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -93,3 +145,16 @@ jobs:
           shasum -a 256 kitsune2-bootstrap-srv-v${{ inputs.kitsune2-bootstrap-srv-version }}-x86_64-unknown-linux-gnu
 
           gh release upload "kitsune2-bootstrap-srv-binaries-${{ inputs.kitsune2-bootstrap-srv-version }}" "kitsune2-bootstrap-srv-v${{ inputs.kitsune2-bootstrap-srv-version }}-x86_64-unknown-linux-gnu"
+
+      - name: setup binaries (aarch64-unknown-linux-gnu)
+        if: matrix.platform == 'ubuntu-22.04-arm' && inputs.aarch64-unknown-linux-gnu == true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cargo install kitsune2_bootstrap_srv --version ${{ inputs.kitsune2-bootstrap-srv-version }} --locked
+          BOOTSTRAP_SRV_PATH=$(which kitsune2-bootstrap-srv)
+          cp $BOOTSTRAP_SRV_PATH kitsune2-bootstrap-srv-v${{ inputs.kitsune2-bootstrap-srv-version }}-aarch64-unknown-linux-gnu
+
+          shasum -a 256 kitsune2-bootstrap-srv-v${{ inputs.kitsune2-bootstrap-srv-version }}-aarch64-unknown-linux-gnu
+
+          gh release upload "kitsune2-bootstrap-srv-binaries-${{ inputs.kitsune2-bootstrap-srv-version }}" "kitsune2-bootstrap-srv-v${{ inputs.kitsune2-bootstrap-srv-version }}-aarch64-unknown-linux-gnu"
