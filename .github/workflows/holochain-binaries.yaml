@@ -79,11 +79,8 @@ jobs:
           skipIfReleaseExists: true
           tag: holochain-binaries-${{ inputs.holochain-version }}
 
-      - name: install Rust stable
-        uses: actions-rs/toolchain@v1
-        with:
-          override: true
-          toolchain: stable
+      - name: install Rust
+        uses: dtolnay/rust-toolchain@1.87.0
 
       - name: install Go stable
         uses: actions/setup-go@v4

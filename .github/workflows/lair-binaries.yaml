@@ -80,11 +80,8 @@ jobs:
           skipIfReleaseExists: true
           tag: lair-binaries-${{ inputs.lair-version }}
 
-      - name: install Rust stable
-        uses: actions-rs/toolchain@v1
-        with:
-          override: true
-          toolchain: stable
+      - name: install Rust
+        uses: dtolnay/rust-toolchain@1.87.0
 
       - name: setup binaries (x86_64-pc-windows-msvc)
         if: matrix.platform == 'windows-2022' && inputs.x86_64-pc-windows-msvc == true
