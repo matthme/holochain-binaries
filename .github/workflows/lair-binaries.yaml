@@ -81,14 +81,14 @@ jobs:
           tag: lair-binaries-${{ inputs.lair-version }}
 
       - name: install Rust
-        uses: dtolnay/rust-toolchain@1.87.0
+        uses: dtolnay/rust-toolchain@1.88.0
 
       - name: setup binaries (x86_64-pc-windows-msvc)
         if: matrix.platform == 'windows-2022' && inputs.x86_64-pc-windows-msvc == true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cargo install lair_keystore --version ${{ inputs.lair-version }} --locked
+          cargo install lair_keystore --version ${{ inputs.lair-version }}
           $LkPath = Get-Command lair-keystore | Select-Object -ExpandProperty Definition
           Copy-Item $LkPath -Destination "lair-keystore-v${{ inputs.lair-version }}-x86_64-pc-windows-msvc.exe"
           CertUtil -hashfile "lair-keystore-v${{ inputs.lair-version }}-x86_64-pc-windows-msvc.exe" SHA256
@@ -101,7 +101,7 @@ jobs:
         run: |
           rustup target add aarch64-apple-darwin
 
-          cargo install lair_keystore --version ${{ inputs.lair-version }} --target aarch64-apple-darwin --locked
+          cargo install lair_keystore --version ${{ inputs.lair-version }} --target aarch64-apple-darwin
           LAIR_PATH=$(which lair-keystore)
           cp $LAIR_PATH lair-keystore-v${{ inputs.lair-version }}-aarch64-apple-darwin
           shasum -a 256 lair-keystore-v${{ inputs.lair-version }}-aarch64-apple-darwin
@@ -114,7 +114,7 @@ jobs:
         run: |
           rustup target add x86_64-apple-darwin
 
-          cargo install lair_keystore --version ${{ inputs.lair-version }} --target x86_64-apple-darwin --locked
+          cargo install lair_keystore --version ${{ inputs.lair-version }} --target x86_64-apple-darwin
           LAIR_PATH=$(which lair-keystore)
           cp $LAIR_PATH lair-keystore-v${{ inputs.lair-version }}-x86_64-apple-darwin
           shasum -a 256 lair-keystore-v${{ inputs.lair-version }}-x86_64-apple-darwin
@@ -125,7 +125,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cargo install lair_keystore --version ${{ inputs.lair-version }} --locked
+          cargo install lair_keystore --version ${{ inputs.lair-version }}
           LAIR_PATH=$(which lair-keystore)
           cp $LAIR_PATH lair-keystore-v${{ inputs.lair-version }}-x86_64-unknown-linux-gnu
           shasum -a 256 lair-keystore-v${{ inputs.lair-version }}-x86_64-unknown-linux-gnu
@@ -136,7 +136,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cargo install lair_keystore --version ${{ inputs.lair-version }} --locked
+          cargo install lair_keystore --version ${{ inputs.lair-version }}
           LAIR_PATH=$(which lair-keystore)
           cp $LAIR_PATH lair-keystore-v${{ inputs.lair-version }}-aarch64-unknown-linux-gnu
           shasum -a 256 lair-keystore-v${{ inputs.lair-version }}-aarch64-unknown-linux-gnu
