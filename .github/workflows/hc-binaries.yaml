@@ -81,7 +81,7 @@ jobs:
           tag: hc-binaries-${{ inputs.hc-version }}
 
       - name: install Rust
-        uses: dtolnay/rust-toolchain@1.87.0
+        uses: dtolnay/rust-toolchain@1.88.0
 
       - name: install Go stable
         uses: actions/setup-go@v4
